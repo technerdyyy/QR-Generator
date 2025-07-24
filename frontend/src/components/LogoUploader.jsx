@@ -2,6 +2,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { Image as ImageIcon } from "lucide-react";
 
 import whatsapp from "../../public/logo/whatsapp.png";
+import youtube from "../../public/logo/youtube.png";
+import instagram from "../../public/logo/instagram.png";
+import facebookSquare from "../../public/logo/facebook-square.png";
+import facebookRound from "../../public/logo/facebook-round.png";
+import linkedin from "../../public/logo/linkedin.png";
+import gmail from "../../public/logo/gmail.png";
+import playstore from "../../public/logo/playstore.png";
+import telephone from "../../public/logo/telephone-call.png";
 
 const LogoUploader = ({
   logoImage,
@@ -57,27 +65,25 @@ const LogoUploader = ({
     }
   };
 
-  // const socialIcons = [
-  //   { icon: Facebook, color: "#1877f2" },
-  //   { icon: Twitter, color: "#1da1f2" },
-  //   { icon: Youtube, color: "#ff0000" },
-  //   { icon: Instagram, color: "#e4405f" },
-  //   { icon: Linkedin, color: "#0077b5" },
-  //   { icon: Mail, color: "#ea4335" },
-  //   { icon: Phone, color: "#34a853" },
-  //   { icon: MapPin, color: "#fbbc05" },
-  //   { icon: Globe, color: "#4285f4" },
-  // ];
+  const socialIcons = [
+    { src: whatsapp, alt: "Whatsapp" },
+    { src: youtube, alt: "Youtube" },
+    { src: instagram, alt: "Instagram" },
+    { src: facebookSquare, alt: "Facebook Square" },
+    { src: facebookRound, alt: "Facebook Round" },
+    { src: linkedin, alt: "LinkedIn" },
+    { src: gmail, alt: "Gmail" },
+    { src: playstore, alt: "PlayStore" },
+    { src: telephone, alt: "Telephone" },
+  ];
 
-  const socialIcons = [{ src: whatsapp, alt: "Whatsapp" }];
+  //handler for selecting social icons
+  const handleSocialIconSelect = (iconSrc) => {
+    onLogoUpload(iconSrc);
+  };
 
   return (
     <>
-      {/* <div className="flex items-center space-x-2 mb-4">
-        <ImageIcon size={20} className="text-primary-600" />
-        <h3 className="text-lg font-semibold text-gray-800">ADD LOGO IMAGE</h3>
-      </div> */}
-
       <div
         className={`rounded-lg p-8 text-center transition-colors ${
           dragActive ? "border-primary-500 bg-primary-50" : "border-gray-300"
@@ -161,6 +167,7 @@ const LogoUploader = ({
             <div
               key={index}
               className="w-16 h-16 rounded-lg border border-gray-200 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => handleSocialIconSelect(item.src)}
             >
               <img
                 src={item.src}

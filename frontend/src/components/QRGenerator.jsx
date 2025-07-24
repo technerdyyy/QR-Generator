@@ -43,7 +43,7 @@ const QRGenerator = () => {
       eyeColor1,
       eyeColor2,
       customEyeColor,
-      removeBackground: false,
+      removeBackground,
     });
   };
 
