@@ -12,6 +12,8 @@ const QRPreview = ({
   customEyeColor,
   pixelSize = 8,
   onGenerate,
+  logoImage,
+  removeBackground,
 }) => {
   const size = pixelSize * 35;
   const [quality, setQuality] = useState(8);
@@ -22,10 +24,10 @@ const QRPreview = ({
   const createQRCode = () => {
     const isGradient = colorMode === "gradient";
 
+    // Create base QR code
     const qrCode = new QRCodeStyling({
       width: size,
       height: size,
-
       data: value || "Sample QR Code",
       dotsOptions: {
         type: "rounded",
@@ -59,9 +61,19 @@ const QRPreview = ({
           : foregroundColor || "#000000",
         type: "dot",
       },
+      // Add logo image if available
+      ...(logoImage && {
+        image: logoImage,
+        imageOptions: {
+          crossOrigin: "anonymous",
+          imageSize: 0.5,
+          hideBackgroundDots: removeBackground,
+        },
+      }),
     });
 
     qrCodeRef.current = qrCode;
+
     if (qrRef.current) {
       qrRef.current.innerHTML = "";
       qrCode.append(qrRef.current);

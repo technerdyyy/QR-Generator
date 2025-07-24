@@ -1,20 +1,28 @@
-import React, { useState } from "react";
-import {
-  Upload,
-  Image as ImageIcon,
-  Facebook,
-  Twitter,
-  Youtube,
-  Instagram,
-  Linkedin,
-  Mail,
-  Phone,
-  MapPin,
-  Globe,
-} from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { Image as ImageIcon } from "lucide-react";
 
-const LogoUploader = ({ onLogoUpload }) => {
+import whatsapp from "../../public/logo/whatsapp.png";
+
+const LogoUploader = ({
+  logoImage,
+  onLogoUpload,
+  onRemoveLogo,
+  onRemoveBackgroundChange,
+}) => {
   const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef(null);
+  const [removeBackground, setRemoveBackground] = useState(false);
+
+  const handleRemove = () => {
+    onRemoveLogo();
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // ensure input is reset on removal
+    }
+  };
+
+  useEffect(() => {
+    onRemoveBackgroundChange?.(removeBackground);
+  }, [removeBackground, onRemoveBackgroundChange]);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -41,22 +49,27 @@ const LogoUploader = ({ onLogoUpload }) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         onLogoUpload(e.target.result);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ""; // reset input so selecting same file again triggers onChange
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const socialIcons = [
-    { icon: Facebook, color: "#1877f2" },
-    { icon: Twitter, color: "#1da1f2" },
-    { icon: Youtube, color: "#ff0000" },
-    { icon: Instagram, color: "#e4405f" },
-    { icon: Linkedin, color: "#0077b5" },
-    { icon: Mail, color: "#ea4335" },
-    { icon: Phone, color: "#34a853" },
-    { icon: MapPin, color: "#fbbc05" },
-    { icon: Globe, color: "#4285f4" },
-  ];
+  // const socialIcons = [
+  //   { icon: Facebook, color: "#1877f2" },
+  //   { icon: Twitter, color: "#1da1f2" },
+  //   { icon: Youtube, color: "#ff0000" },
+  //   { icon: Instagram, color: "#e4405f" },
+  //   { icon: Linkedin, color: "#0077b5" },
+  //   { icon: Mail, color: "#ea4335" },
+  //   { icon: Phone, color: "#34a853" },
+  //   { icon: MapPin, color: "#fbbc05" },
+  //   { icon: Globe, color: "#4285f4" },
+  // ];
+
+  const socialIcons = [{ src: whatsapp, alt: "Whatsapp" }];
 
   return (
     <>
@@ -66,7 +79,7 @@ const LogoUploader = ({ onLogoUpload }) => {
       </div> */}
 
       <div
-        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+        className={`rounded-lg p-8 text-center transition-colors ${
           dragActive ? "border-primary-500 bg-primary-50" : "border-gray-300"
         }`}
         onDragEnter={handleDrag}
@@ -75,26 +88,45 @@ const LogoUploader = ({ onLogoUpload }) => {
         onDrop={handleDrop}
       >
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center">
-            <ImageIcon size={32} className="text-gray-400" />
+          <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden  border-2 border-gray-300 border-dashed">
+            {logoImage ? (
+              <img
+                src={logoImage}
+                alt="Logo Preview"
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <ImageIcon size={32} className="text-gray-400" />
+            )}
           </div>
           <div>
             <button
-              className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+              className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors cursor-pointer"
               onClick={() => document.getElementById("logoInput").click()}
             >
               Upload Image
             </button>
+
             <input
+              key={logoImage ? "has-logo" : "no-logo"}
               id="logoInput"
               type="file"
               accept="image/*"
+              ref={fileInputRef}
               onChange={(e) =>
                 e.target.files[0] && handleFile(e.target.files[0])
               }
               className="sr-only"
             />
           </div>
+          {logoImage && (
+            <button
+              className="border-gray-500 border-2 text-black px-6 py-2 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer"
+              onClick={onRemoveLogo}
+            >
+              Remove Logo
+            </button>
+          )}
           <div className="text-center">
             <p className="text-sm text-gray-600 mb-2">
               <span className="font-medium">Spotlight your logo!</span>
@@ -115,6 +147,8 @@ const LogoUploader = ({ onLogoUpload }) => {
           <input
             type="checkbox"
             id="removeBackground"
+            checked={removeBackground}
+            onChange={(e) => setRemoveBackground(e.target.checked)}
             className="text-primary-600 focus:ring-primary-500"
           />
           <label htmlFor="removeBackground" className="text-sm text-gray-700">
@@ -126,10 +160,13 @@ const LogoUploader = ({ onLogoUpload }) => {
           {socialIcons.map((item, index) => (
             <div
               key={index}
-              className="w-12 h-12 rounded-lg border border-gray-200 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
-              style={{ borderColor: item.color }}
+              className="w-16 h-16 rounded-lg border border-gray-200 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
             >
-              <item.icon size={20} style={{ color: item.color }} />
+              <img
+                src={item.src}
+                alt={item.alt}
+                className="w-10 h-10 object-contain"
+              />
             </div>
           ))}
         </div>

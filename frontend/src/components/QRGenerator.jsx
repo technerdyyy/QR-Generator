@@ -30,6 +30,8 @@ const QRGenerator = () => {
   const [eyeColor1, setEyeColor1] = useState("#000000");
   const [eyeColor2, setEyeColor2] = useState("#000000");
   const [customEyeColor, setCustomEyeColor] = useState(false);
+  const [logoImage, setLogoImage] = useState(null);
+  const [removeBackground, setRemoveBackground] = useState(false);
 
   const handleGenerate = () => {
     setFinalSettings({
@@ -41,6 +43,7 @@ const QRGenerator = () => {
       eyeColor1,
       eyeColor2,
       customEyeColor,
+      removeBackground: false,
     });
   };
 
@@ -104,7 +107,16 @@ const QRGenerator = () => {
               onCustomEyeColorChange={setCustomEyeColor}
             />
           )}
-          {renderSection("logo", "Add Logo Image", <LogoUploader />)}
+          {renderSection(
+            "logo",
+            "Add Logo Image",
+            <LogoUploader
+              logoImage={logoImage}
+              onLogoUpload={setLogoImage}
+              onRemoveLogo={() => setLogoImage(null)}
+              onRemoveBackgroundChange={setRemoveBackground}
+            />
+          )}
           {renderSection("design", "Customize Design", <CustomizeDesign />)}
           {/* {renderSection("template", "Choose Template", <TemplateSelector />)} */}
 
@@ -130,6 +142,8 @@ const QRGenerator = () => {
             colorMode={finalSettings.colorMode}
             customEyeColor={finalSettings.customEyeColor}
             onGenerate={handleGenerate}
+            logoImage={logoImage}
+            removeBackground={finalSettings.removeBackground}
           />
         </div>
       </div>
