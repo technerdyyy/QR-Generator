@@ -11,19 +11,37 @@ const QRGenerator = () => {
 
   const [selectedType, setSelectedType] = useState("url");
   const [content, setContent] = useState("");
-  const [finalValue, setFinalValue] = useState("");
+  const [finalSettings, setFinalSettings] = useState({
+    value: "",
+    foregroundColor: "#000000",
+    gradientColor: "#a5bb02",
+    backgroundColor: "#ffffff",
+    colorMode: "gradient",
+    eyeColor1: "#000000",
+    eyeColor2: "#000000",
+    customEyeColor: false,
+  });
 
   const [foregroundColor, setForegroundColor] = useState("#000000");
-  const [gradientColor, setGradientColor] = useState("#0277bd");
+  const [gradientColor, setGradientColor] = useState("#a5bb02");
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
 
   const [colorMode, setColorMode] = useState("gradient");
   const [eyeColor1, setEyeColor1] = useState("#000000");
-  const [eyeColor2, setEyeColor2] = useState("#0277bd");
+  const [eyeColor2, setEyeColor2] = useState("#000000");
   const [customEyeColor, setCustomEyeColor] = useState(false);
 
   const handleGenerate = () => {
-    setFinalValue(content);
+    setFinalSettings({
+      value: content,
+      foregroundColor,
+      gradientColor,
+      backgroundColor,
+      colorMode,
+      eyeColor1,
+      eyeColor2,
+      customEyeColor,
+    });
   };
 
   const handleEyeColorsSwap = () => {
@@ -103,14 +121,14 @@ const QRGenerator = () => {
         {/* Right Preview Panel */}
         <div className="col-span-1">
           <QRPreview
-            value={finalValue}
-            foregroundColor={foregroundColor}
-            backgroundColor={backgroundColor}
-            gradientColor={gradientColor}
-            eyeColor1={eyeColor1}
-            eyeColor2={eyeColor2}
-            colorMode={colorMode}
-            customEyeColor={customEyeColor}
+            value={finalSettings.value}
+            foregroundColor={finalSettings.foregroundColor}
+            backgroundColor={finalSettings.backgroundColor}
+            gradientColor={finalSettings.gradientColor}
+            eyeColor1={finalSettings.eyeColor1}
+            eyeColor2={finalSettings.eyeColor2}
+            colorMode={finalSettings.colorMode}
+            customEyeColor={finalSettings.customEyeColor}
             onGenerate={handleGenerate}
           />
         </div>

@@ -15,54 +15,53 @@ const QRPreview = ({
 }) => {
   const size = pixelSize * 35;
   const [quality, setQuality] = useState(8);
-  const [generated, setGenerated] = useState(false);
+  const [shouldGenerate, setShouldGenerate] = useState(false);
   const qrRef = useRef(null);
   const qrCodeRef = useRef(null);
 
   const createQRCode = () => {
-    let dotsColor = foregroundColor || "#000000";
-    let cornersSquareColor = foregroundColor || "#000000";
-    let cornersDotColor = foregroundColor || "#000000";
-
-    if (colorMode === "gradient") {
-      dotsColor = {
-        type: "linear-gradient",
-        rotation: 0,
-        colorStops: [
-          { offset: 0, color: foregroundColor || "#000000" },
-          { offset: 1, color: gradientColor || "#0000ff" },
-        ],
-      };
-    }
-
-    if (customEyeColor) {
-      cornersSquareColor = eyeColor1 || "#000000";
-      cornersDotColor = eyeColor2 || "#000000";
-    }
+    const isGradient = colorMode === "gradient";
 
     const qrCode = new QRCodeStyling({
       width: size,
       height: size,
+
       data: value || "Sample QR Code",
       dotsOptions: {
-        color: dotsColor,
         type: "rounded",
+        ...(isGradient
+          ? {
+              gradient: {
+                type: "linear",
+                rotation: 0,
+                colorStops: [
+                  { offset: 0, color: foregroundColor || "#000000" },
+                  { offset: 1, color: gradientColor || "#0000ff" },
+                ],
+              },
+            }
+          : {
+              color: foregroundColor || "#000000",
+            }),
       },
       backgroundOptions: {
         color: backgroundColor || "#ffffff",
       },
       cornersSquareOptions: {
-        color: cornersSquareColor,
+        color: customEyeColor
+          ? eyeColor1 || "#000000"
+          : foregroundColor || "#000000",
         type: "extra-rounded",
       },
       cornersDotOptions: {
-        color: cornersDotColor,
+        color: customEyeColor
+          ? eyeColor2 || "#000000"
+          : foregroundColor || "#000000",
         type: "dot",
       },
     });
 
     qrCodeRef.current = qrCode;
-
     if (qrRef.current) {
       qrRef.current.innerHTML = "";
       qrCode.append(qrRef.current);
@@ -70,12 +69,14 @@ const QRPreview = ({
   };
 
   useEffect(() => {
-    createQRCode(); // Initial placeholder
-  }, []);
+    createQRCode();
+    if (shouldGenerate) {
+      setShouldGenerate(false);
+    }
+  }, [shouldGenerate]);
 
   const handleGenerate = () => {
-    setGenerated(true);
-    createQRCode();
+    setShouldGenerate(true); // trigger QR generation AFTER render
     onGenerate?.();
   };
 
